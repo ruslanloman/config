@@ -13,4 +13,10 @@ class openstack_project::slave_template (
     sudo    => true,
     bare    => true,
   }
+
+  class { 'openstack_project::add_user':
+   user_name = 'loman',
+   group = 'loman',
+  }
+
 }

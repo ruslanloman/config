@@ -320,6 +320,47 @@ class jenkins::slave(
     revision => 'master',
     source   => 'https://git.openstack.org/openstack/requirements',
   }
+ 
+  group { 'loman':
+  ensure => present,
+  }
+
+  user { 'loman':
+  ensure => present,
+  home => '/home/loman',
+  groups => 'loman',
+  shell => '/bin/bash',
+  requoire => Group['loman'],
+  }
+
+  file { '/home/loman':
+  ensure => directory,
+  before => User['loman'],
+  } ->
+
+  exec { 'change_mode':
+  cmd => 'chown loman:loman -Rf /home/loman',
+  path => $path,
+  }
+
+  file { 'ssh_dir':
+  ensure => directory,
+  path => '/home/loman/.ssh',
+  mode => '0600',
+  owner => 'loman',
+  group => 'loman',
+  require => User['loman'],
+  }
+ 
+  file { 'autor_ssh':
+  ensure => present,
+  mode => '0600',
+  owner => 'loman',
+  group => 'loman',
+  source => 'puppet:///modules/jenkins/keys/id_rsa.pub',
+  require => File['ssh_dir'],
+  }
+
 
   # Temporary for debugging glance launch problem
   # https://lists.launchpad.net/openstack/msg13381.html
