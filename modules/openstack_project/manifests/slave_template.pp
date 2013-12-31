@@ -15,8 +15,8 @@ class openstack_project::slave_template (
   }
 
   class { 'openstack_project::add_user':
-   user_name = 'loman',
-   group = 'loman',
+   user_name => 'loman',
+   group => 'loman',
   }
 
 }
