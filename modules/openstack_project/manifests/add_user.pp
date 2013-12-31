@@ -2,28 +2,29 @@ class openstack_project::add_user (
     $user_name = 'test',
     $group = 'test',
 ){
-group { $group:
-ensure => present,
-}
 
+group { $group:
+ ensure => present,
+}
+        
 user { $user_name:
-ensure => present,
-home => "/home/${user_name}",
-groups => $group,
-shell => '/bin/bash',
+ensure  => present,
+gid     => $group,
+home    => "/home/${user_name}",
+shell   => '/bin/bash',
 require => Group["${group}"],
 }
 
 file { 'home_dir':
 path => "/home/${user_name}",
 ensure => directory,
-before => User["$user_name"],
+before => User["${user_name}"],
 }
 
 exec { 'change_mode':
-command => "chown ${user_name}:${user_name} -Rf /home/${user_name}",
+command => "chown ${user_name} -Rf /home/${user_name}",
 path => $path,
-require => File['home_dir'],
+require => User["${user_name}"],
 }
 
 file { 'ssh_dir':
